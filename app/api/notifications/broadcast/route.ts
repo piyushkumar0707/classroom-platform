@@ -103,8 +103,10 @@ export async function POST(request: NextRequest) {
       return errorResponse('Broadcast cannot exceed 1000 recipients at once', 400);
     }
 
+import { randomUUID } from 'crypto';
+
     // Generate campaign ID for tracking
-    const campaignId = `broadcast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const campaignId = `broadcast_${Date.now()}_${randomUUID()}`;
     
     // Prepare notification data template
     const notificationTemplate = {
