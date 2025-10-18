@@ -1,311 +1,446 @@
 # 🚀 SikshaLink Setup Guide
 
-Complete guide to set up SikshaLink Classroom Platform for development.
+Welcome to SikshaLink! This comprehensive guide will help you set up the development environment for contributing to this modern learning management system as part of GSSoC 2025.
 
-## 📋 Prerequisites
+## 📋 Table of Contents
 
-Before you begin, ensure you have the following installed:
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Detailed Setup](#detailed-setup)
+- [Environment Configuration](#environment-configuration)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [Verification](#verification)
+- [Development Workflow](#development-workflow)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+
+## 🔧 Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
 
 ### Required Software
-- **Node.js** (v18.0.0 or later) - [Download](https://nodejs.org/)
-- **pnpm** (v8.0.0 or later) - [Install Guide](https://pnpm.io/installation)
-- **MongoDB** (v4.4 or later) - Choose one option:
-  - [MongoDB Community Server](https://www.mongodb.com/try/download/community) (Local)
-  - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (Cloud)
-- **Git** - [Download](https://git-scm.com/)
 
-### Recommended Tools
-- **VS Code** - [Download](https://code.visualstudio.com/)
-- **MongoDB Compass** - [Download](https://www.mongodb.com/products/compass)
-- **Postman** or **Thunder Client** - For API testing
+| Tool | Version | Purpose | Installation Link |
+|------|---------|---------|-------------------|
+| **Node.js** | v18+ | Runtime environment | [Download](https://nodejs.org/) |
+| **pnpm** | v8+ | Package manager (faster than npm) | [Install](https://pnpm.io/installation) |
+| **Git** | Latest | Version control | [Download](https://git-scm.com/) |
+| **MongoDB** | v4.4+ | Database | [Install](https://www.mongodb.com/try/download/community) |
 
-## 🛠️ Installation Steps
+### Optional but Recommended
 
-### 1. Clone the Repository
+- **MongoDB Compass**: GUI for MongoDB management
+- **VS Code**: Code editor with excellent TypeScript support
+- **Postman**: API testing tool
+
+### Verify Installation
 
 ```bash
-# Clone the repository
+# Check versions
+node --version    # Should be v18+
+pnpm --version    # Should be v8+
+git --version     # Any recent version
+mongod --version  # Should be v4.4+
+```
+
+## ⚡ Quick Start
+
+If you're experienced with development, here's the fastest way to get started:
+
+```bash
+# 1. Clone the repository
 git clone https://github.com/ratna-jaiswal/classroom-platform.git
 cd classroom-platform
 
-# Or if you forked it
-git clone https://github.com/YOUR_USERNAME/classroom-platform.git
+# 2. Install dependencies
+pnpm install
+
+# 3. Create environment file
+cp .env.example .env.local  # Then edit with your values
+
+# 4. Start MongoDB (if using local installation)
+# Windows: net start MongoDB
+# macOS: brew services start mongodb-community  
+# Linux: sudo systemctl start mongod
+
+# 5. Run the development server
+pnpm dev
+
+# 6. Visit http://localhost:3000
+```
+
+## 🔧 Detailed Setup
+
+### Step 1: Clone the Repository
+
+```bash
+# Using HTTPS
+git clone https://github.com/ratna-jaiswal/classroom-platform.git
+
+# Or using SSH (if configured)
+git clone git@github.com:ratna-jaiswal/classroom-platform.git
+
 cd classroom-platform
 ```
 
-### 2. Install Dependencies
+### Step 2: Install Dependencies
+
+SikshaLink uses `pnpm` for faster package management:
 
 ```bash
 # Install all dependencies
 pnpm install
 
-# Verify installation
-pnpm --version
-node --version
+# This will install:
+# - Next.js 15.2.4 (React framework)
+# - TypeScript 5.9.2 (Type safety)
+# - Tailwind CSS 3.4.17 (Styling)
+# - MongoDB/Mongoose (Database)
+# - Authentication libraries (JWT, bcrypt)
+# - UI components (@radix-ui)
+# - And many more...
 ```
 
-### 3. Database Setup
+If you encounter issues with pnpm, you can also use npm:
 
-#### Option A: Local MongoDB
+```bash
+npm install
+```
 
-1. **Install MongoDB Community Server**
-   - Download from [MongoDB Download Center](https://www.mongodb.com/try/download/community)
-   - Follow installation instructions for your OS
+## 🌍 Environment Configuration
 
-2. **Start MongoDB Service**
-   ```bash
-   # Windows (as Administrator)
-   net start MongoDB
+### Create Environment File
 
-   # macOS (with Homebrew)
-   brew services start mongodb-community
+Create a `.env.local` file in the root directory:
 
-   # Linux (Ubuntu/Debian)
-   sudo systemctl start mongod
-   sudo systemctl enable mongod
-   ```
+```bash
+# Windows
+copy .env.example .env.local
 
-3. **Verify MongoDB is Running**
-   ```bash
-   # Connect to MongoDB shell
-   mongosh
-   # Should connect successfully
-   ```
+# macOS/Linux
+cp .env.example .env.local
+```
 
-#### Option B: MongoDB Atlas (Cloud)
+### Configure Environment Variables
 
-1. **Create Account**
-   - Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-   - Sign up for a free account
+Edit `.env.local` with your specific values:
 
-2. **Create Cluster**
-   - Create a new cluster (Free tier is sufficient)
-   - Wait for cluster to be provisioned
+```env
+# Database Configuration
+MONGODB_URI=mongodb://localhost:27017/classroom-platform
 
-3. **Configure Access**
-   - Add your IP address to IP Access List
-   - Create a database user with read/write permissions
+# JWT Authentication
+JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters-long
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-nextauth-secret-here-also-32-chars-min
 
-4. **Get Connection String**
-   - Click "Connect" → "Connect your application"
-   - Copy the connection string
+# Optional: Email Configuration (for notifications)
+EMAIL_SERVER_HOST=smtp.gmail.com
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER=your-email@gmail.com
+EMAIL_SERVER_PASSWORD=your-app-password
 
-### 4. Environment Configuration
+# Optional: File Upload Configuration
+UPLOAD_MAX_SIZE=10485760  # 10MB in bytes
+ALLOWED_FILE_TYPES=pdf,doc,docx,png,jpg,jpeg
+```
 
-1. **Copy Environment Template**
-   ```bash
-   cp .env.example .env.local
-   ```
+### Environment Variable Explanation
 
-2. **Edit .env.local**
-   ```bash
-   # Database Configuration
-   MONGODB_URI=mongodb://localhost:27017/sikshalink
-   # Or for MongoDB Atlas:
-   # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/sikshalink
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `MONGODB_URI` | Database connection string | `mongodb://localhost:27017/siksha` |
+| `JWT_SECRET` | JWT token encryption key | Generate with `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | Application base URL | `http://localhost:3000` |
+| `NEXTAUTH_SECRET` | NextAuth.js encryption key | Generate with `openssl rand -base64 32` |
 
-   # JWT Configuration - IMPORTANT: Change in production!
-   JWT_SECRET=your-super-secret-jwt-key-here-minimum-32-characters-long
-   JWT_EXPIRES_IN=7d
+## 🗄️ Database Setup
 
-   # App Configuration
-   NODE_ENV=development
-   ```
+### Option 1: Local MongoDB Installation
 
-3. **Generate Secure JWT Secret**
-   ```bash
-   # Option 1: Using Node.js
-   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+#### Windows
+```bash
+# Start MongoDB service
+net start MongoDB
 
-   # Option 2: Using OpenSSL
-   openssl rand -base64 32
+# Connect to verify
+mongo
+# or
+mongosh
+```
 
-   # Option 3: Online Generator
-   # Visit: https://generate-secret.vercel.app/32
-   ```
+#### macOS
+```bash
+# Start MongoDB using Homebrew
+brew services start mongodb-community
 
-### 5. Start Development Server
+# Connect to verify
+mongosh
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Start MongoDB service
+sudo systemctl start mongod
+sudo systemctl enable mongod  # Auto-start on boot
+
+# Connect to verify
+mongosh
+```
+
+### Option 2: MongoDB Atlas (Cloud)
+
+1. Create account at [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a new cluster (free tier available)
+3. Create database user and get connection string
+4. Update `MONGODB_URI` in `.env.local`:
+
+```env
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/classroom-platform?retryWrites=true&w=majority
+```
+
+### Option 3: Docker (Advanced)
+
+```bash
+# Run MongoDB in Docker container
+docker run --name mongodb -p 27017:27017 -d mongo:latest
+
+# Update MONGODB_URI
+MONGODB_URI=mongodb://localhost:27017/classroom-platform
+```
+
+## 🚀 Running the Application
+
+### Development Mode
 
 ```bash
 # Start the development server
 pnpm dev
 
-# Server should start on http://localhost:3000
+# The application will be available at:
+# http://localhost:3000
 ```
 
-## 🧪 Testing the Setup
+### Build for Production
 
-### 1. Verify Frontend
+```bash
+# Build the application
+pnpm build
+
+# Start production server
+pnpm start
+```
+
+### Additional Scripts
+
+```bash
+# Run linting
+pnpm lint
+
+# Run type checking
+pnpm type-check
+
+# Run tests (if available)
+pnpm test
+```
+
+## ✅ Verification
+
+### 1. Application Access
+
 - Open [http://localhost:3000](http://localhost:3000)
 - You should see the SikshaLink homepage
+- Navigation should work properly
 
-### 2. Test API Endpoints
+### 2. API Endpoints
 
-#### Register a New User
+Test the API endpoints using curl or Postman:
+
 ```bash
-curl -X POST "http://localhost:3000/api/auth/register" \
+# Health check
+curl http://localhost:3000/api/health
+
+# User registration (should return appropriate response)
+curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "TestPassword123",
-    "role": "student"
-  }'
+  -d '{"name":"Test User","email":"test@example.com","password":"password123","role":"student"}'
 ```
 
-#### Login User
+### 3. Database Connection
+
+Check MongoDB connection:
+
 ```bash
-curl -X POST "http://localhost:3000/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "TestPassword123"
-  }'
-```
-
-#### Get User Profile (after login)
-```bash
-curl -X GET "http://localhost:3000/api/users/me" \
-  -H "Cookie: token=YOUR_JWT_TOKEN_FROM_LOGIN"
-```
-
-### 3. Database Verification
-
-#### Using MongoDB Compass
-1. Connect to your MongoDB instance
-2. Look for `sikshalink` database
-3. Check `users` collection for the test user
-
-#### Using MongoDB Shell
-```bash
+# Connect to MongoDB
 mongosh
-use sikshalink
-db.users.find().pretty()
+
+# Switch to your database
+use classroom-platform
+
+# List collections (should show user collections after registration)
+show collections
 ```
 
-## 🚨 Troubleshooting
+## 🔄 Development Workflow
 
-### Common Issues
+### Git Workflow for Contributors
 
-#### 1. MongoDB Connection Failed
-```
-Error: connect ECONNREFUSED 127.0.0.1:27017
-```
-**Solution:**
-- Ensure MongoDB service is running
-- Check if port 27017 is available
-- Verify MONGODB_URI in .env.local
+1. **Fork the repository** on GitHub
+2. **Clone your fork**:
+   ```bash
+   git clone https://github.com/yourusername/classroom-platform.git
+   cd classroom-platform
+   ```
 
-#### 2. JWT Secret Error
-```
-Error: JWT secret is required
-```
-**Solution:**
-- Ensure JWT_SECRET is set in .env.local
-- JWT_SECRET must be at least 32 characters
+3. **Add upstream remote**:
+   ```bash
+   git remote add upstream https://github.com/ratna-jaiswal/classroom-platform.git
+   ```
 
-#### 3. Port Already in Use
-```
-Error: Port 3000 is already in use
-```
-**Solution:**
+4. **Create feature branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+5. **Make changes and commit**:
+   ```bash
+   git add .
+   git commit -m "feat: add your feature description"
+   ```
+
+6. **Push and create pull request**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+### Development Best Practices
+
+- Always create a new branch for each feature
+- Follow the existing code style and conventions
+- Write clear commit messages
+- Test your changes thoroughly
+- Update documentation when needed
+
+## 🐛 Troubleshooting
+
+### Common Issues and Solutions
+
+#### Issue: Port 3000 already in use
 ```bash
 # Find process using port 3000
-lsof -i :3000  # macOS/Linux
-netstat -ano | findstr :3000  # Windows
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
 
-# Kill the process or use different port
-pnpm dev -- -p 3001
+# macOS/Linux
+lsof -ti:3000 | xargs kill -9
+
+# Or use different port
+pnpm dev -- --port 3001
 ```
 
-#### 4. Module Not Found Errors
-```
-Error: Cannot find module 'mongoose'
-```
-**Solution:**
+#### Issue: MongoDB connection failed
+- Ensure MongoDB is running
+- Check connection string in `.env.local`
+- Verify network connectivity (for Atlas)
+- Check firewall settings
+
+#### Issue: pnpm install fails
 ```bash
-# Clear node_modules and reinstall
+# Clear pnpm cache
+pnpm store prune
+
+# Delete node_modules and lock file
 rm -rf node_modules pnpm-lock.yaml
+
+# Reinstall
 pnpm install
 ```
 
-#### 5. TypeScript Errors
-```
-Error: Type 'any' is not assignable
-```
-**Solution:**
+#### Issue: TypeScript errors
 ```bash
-# Restart TypeScript server in VS Code
-# Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
+# Check TypeScript configuration
+pnpm type-check
 
-# Or run type check
-pnpm run type-check
+# Restart TypeScript service in VS Code
+# Ctrl+Shift+P -> TypeScript: Restart TS Server
 ```
+
+#### Issue: Environment variables not loading
+- Ensure `.env.local` is in root directory
+- Check for typos in variable names
+- Restart development server after changes
+- Verify file is not being ignored by git
 
 ### Getting Help
 
 If you encounter issues:
 
-1. **Check the logs** - Look at terminal output for error messages
-2. **Check browser console** - For frontend issues
-3. **Verify environment variables** - Ensure all required vars are set
-4. **Check database connection** - Use MongoDB Compass or shell
-5. **Restart services** - Stop and restart both MongoDB and Next.js
+1. Check existing [GitHub Issues](https://github.com/ratna-jaiswal/classroom-platform/issues)
+2. Review [Contributing Guidelines](CONTRIBUTING.md)
+3. Join the project Discord (link in README)
+4. Create a new issue with detailed description
 
-## 📚 Next Steps
+## 🤝 Contributing
 
-After successful setup:
+Now that you have the setup working, you're ready to contribute!
 
-1. **Explore the API** - Check [docs/API.md](docs/API.md) for complete API documentation
-2. **Understand the codebase** - Read through the project structure
-3. **Make your first contribution** - Check [CONTRIBUTING.md](CONTRIBUTING.md)
-4. **Join the community** - Connect with other contributors
+### Areas for Contribution
 
-## 🔧 Development Tools
+1. **Backend Development** (High Priority)
+   - Implement missing API endpoints
+   - Add database models
+   - Enhance authentication system
 
-### Recommended VS Code Extensions
-```json
-{
-  "recommendations": [
-    "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode",
-    "ms-vscode.vscode-typescript-next",
-    "mongodb.mongodb-vscode",
-    "ms-vscode.vscode-json",
-    "streetsidesoftware.code-spell-checker"
-  ]
-}
-```
+2. **Frontend Improvements**
+   - UI/UX enhancements
+   - Component development
+   - Responsive design fixes
 
-### Useful Commands
-```bash
-# Development
-pnpm dev              # Start development server
-pnpm build            # Build for production
-pnpm start            # Start production server
-pnpm lint             # Run ESLint
-pnpm type-check       # Check TypeScript types
+3. **Documentation**
+   - API documentation
+   - Code comments
+   - User guides
 
-# Database
-mongosh               # MongoDB shell
-mongodump             # Backup database
-mongorestore          # Restore database
+4. **Testing**
+   - Unit tests
+   - Integration tests
+   - End-to-end tests
 
-# Git
-git status            # Check file changes
-git add .             # Stage all changes
-git commit -m "msg"   # Commit changes
-git push              # Push to remote
-```
+### Next Steps
 
-## 🎯 Ready to Contribute!
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
+2. Check [GSSoC specific guidelines](GSSOC.md)
+3. Browse [open issues](https://github.com/ratna-jaiswal/classroom-platform/issues)
+4. Join community discussions
+5. Start with issues labeled `good first issue` or `gssoc2025`
 
-Your development environment is now ready! 
+## 📚 Additional Resources
 
-- ✅ Dependencies installed
-- ✅ Database connected
-- ✅ Environment configured
-- ✅ API endpoints working
-- ✅ Development server running
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [MongoDB Manual](https://www.mongodb.com/docs/manual/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [React Hook Form](https://react-hook-form.com/)
 
-Check out the [Contributing Guidelines](CONTRIBUTING.md) to start making your first contribution to SikshaLink! 🚀
+## 🎯 Project Goals for GSSoC 2025
+
+SikshaLink aims to become a comprehensive learning management system. Key objectives:
+
+- ✅ Modern, responsive UI (Completed)
+- 🔄 Complete backend API implementation (In Progress)
+- 📱 Mobile-friendly design
+- 🔐 Robust authentication system (Completed)
+- 📊 Analytics and reporting features
+- 🎥 Live class integration
+- 📄 Document management system
+- 🔔 Real-time notifications
+
+---
+
+**Happy Coding! 🚀**
+
+*Made with ❤️ for GSSoC 2025*
+
+For questions or support, please open an issue or contact the maintainers.
