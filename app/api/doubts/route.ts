@@ -68,17 +68,20 @@ export async function GET(request: NextRequest) {
     const total = await Doubt.countDocuments(filter);
     const totalPages = Math.ceil(total / limit);
 
-    return successResponse('Doubts fetched successfully', {
-      doubts,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalItems: total,
-        itemsPerPage: limit,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
-      }
-    });
+    return successResponse(
+      {
+        doubts,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalItems: total,
+          itemsPerPage: limit,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1
+        }
+      },
+      'Doubts fetched successfully'
+    );
 
   } catch (error: any) {
     console.error('Error fetching doubts:', error);
