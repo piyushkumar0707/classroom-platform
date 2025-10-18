@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Doubt from '@/models/DoubtModel';
-import connectToDatabase from '@/lib/db';
+import { connectToDatabase } from '@/lib/db';
 import { createDoubtSchema, doubtQuerySchema } from '@/lib/validations/doubt';
 import { verifyToken, extractTokenFromHeader } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
